@@ -1,9 +1,19 @@
-import React, { useState } from "react";
+import React, { useState, useContext } from "react";
+import { AuthContext } from "../context/AuthContext";
 import { NavLink } from "react-router-dom";
 import img from "../../public/ImgLogo.png";
 
 const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
+  const { user, logout } = useContext(AuthContext);
+
+  const handleLogout = async () => {
+    try {
+      await logout();
+    } catch (error) {
+      console.log("Error during logout:", error);
+    }
+  };
 
   // Desktop navigation styling
   const navLinkClass = ({ isActive }) =>
@@ -21,7 +31,6 @@ const Navbar = () => {
     <>
       {/* Navbar */}
       <div className="h-20 flex items-center justify-between px-4 sm:px-6 lg:px-10 text-[16px] font-bold font-sans bg-slate-200">
-
         {/* Logo */}
         <NavLink to="/" onClick={() => setIsOpen(false)}>
           <img
@@ -33,18 +42,19 @@ const Navbar = () => {
 
         {/* Desktop Navigation */}
         <ul className="hidden lg:flex gap-4 items-center">
-
           <li>
             <NavLink to="/" end className={navLinkClass}>
               Home
             </NavLink>
           </li>
 
-          <li>
-            <NavLink to="/dashboard" className={navLinkClass}>
-              Dashboard
-            </NavLink>
-          </li>
+          {user && (
+            <li>
+              <NavLink to="/dashboard" className={navLinkClass}>
+                Dashboard
+              </NavLink>
+            </li>
+          )}
 
           <li>
             <NavLink to="/applications" className={navLinkClass}>
@@ -70,12 +80,16 @@ const Navbar = () => {
             </NavLink>
           </li>
 
-          <li>
-            <NavLink to="/logout" className={navLinkClass}>
-              Logout
-            </NavLink>
-          </li>
-
+          {user?<button
+            onClick={handleLogout}
+            className="px-4 py-2 text-slate-700 font-medium hover:text-red-600 transition duration-200"
+          >
+            Logout
+          </button>:
+          <NavLink to="/login" className={navLinkClass}>
+            Login
+          </NavLink>
+          }
         </ul>
 
         {/* Mobile Hamburger */}
@@ -114,14 +128,9 @@ const Navbar = () => {
           border-t border-slate-300
           overflow-hidden
           transition-all duration-300 ease-in-out
-          ${
-            isOpen
-              ? "max-h-150 opacity-100 py-5"
-              : "max-h-0 opacity-0 py-0"
-          }
+          ${isOpen ? "max-h-150 opacity-100 py-5" : "max-h-0 opacity-0 py-0"}
         `}
       >
-
         <li>
           <NavLink
             to="/"
@@ -133,15 +142,17 @@ const Navbar = () => {
           </NavLink>
         </li>
 
-        <li>
-          <NavLink
-            to="/dashboard"
-            onClick={() => setIsOpen(false)}
-            className={mobileNavLinkClass}
-          >
-            Dashboard
-          </NavLink>
-        </li>
+        {user && (
+          <li>
+            <NavLink
+              to="/dashboard"
+              onClick={() => setIsOpen(false)}
+              className={mobileNavLinkClass}
+            >
+              Dashboard
+            </NavLink>
+          </li>
+        )}
 
         <li>
           <NavLink
@@ -183,16 +194,16 @@ const Navbar = () => {
           </NavLink>
         </li>
 
-        <li>
-          <NavLink
-            to="/logout"
-            onClick={() => setIsOpen(false)}
-            className={mobileNavLinkClass}
+        {user?<button
+            onClick={handleLogout}
+            className="px-4 py-2 text-slate-700 font-medium hover:text-red-600 transition duration-200"
           >
             Logout
+          </button>:
+          <NavLink to="/login" className={mobileNavLinkClass}>
+            Login
           </NavLink>
-        </li>
-
+          }
       </ul>
     </>
   );

@@ -37,12 +37,16 @@ const signup = async (req, res) => {
     await user.save();
 
     const token = user.getJWT();
-    res.cookie("Token", token);
+    res.cookie("Token", token, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production",
+      sameSite: "lax",
+    });
 
     res.status(201).json({
       success: true,
       message: "User registered successfully",
-      token,
+      user
     });
   } catch (error) {
     console.log(error.message);
@@ -85,61 +89,79 @@ const login = async (req, res) => {
         Success: "False",
       });
     }
-    const isPasswordCorrect =await user.verifyPassword(password);
+    const isPasswordCorrect = await user.verifyPassword(password);
     if (isPasswordCorrect) {
       const token = user.getJWT();
-      res.cookie("Token", token);
+      res.cookie("Token", token, {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === "production",
+        sameSite: "lax",
+      });
       res.status(200).json({
         message: "Login Successfull",
         user: user,
       });
-    }else{
-        throw new Error("Invalid Credentials");
+    } else {
+      throw new Error("Invalid Credentials");
     }
   } catch (err) {
     res.status(500).json({
-        message:err.message,
-        success:false
-    })
+      message: err.message,
+      success: false,
+    });
   }
 };
 
-const logout = async(req,res)=>{
-    // #just delete the cookie and token thats it
-    res.cookie("Token", null,{
-        expires: new Date(Date.now())
-    });
-    res.status(200).json({message:"Logout Successfull"})
-}
+const logout = async (req, res) => {
+  // #just delete the cookie and token thats it
+  res.cookie("Token", null, {
+    expires: new Date(Date.now()),
+  });
+  res.status(200).json({ message: "Logout Successfull" });
+};
 
-const forgotPassword = async(req,res) =>{
-    try{
-        const {email} = req.body
+const forgotPassword = async (req, res) => {
+  try {
+    const { email } = req.body;
 
-        const user = await User.findOne({email});
+    const user = await User.findOne({ email });
 
-        if(!user){
-            return res.status(401).json({message: "User does not exists"});
-        }
-
-        const {password} = req.body;
-        const hashedPassword = await bcrypt.hash(password,10);
-        user.password=hashedPassword;
-        await user.save();
-        res.status(200).json({
-            message:"Password updated successfully",
-            success: true
-        })
-   }catch(err){
-        res.status(500).json({error : err.message,
-            success: false
-        });
+    if (!user) {
+      return res.status(401).json({ message: "User does not exists" });
     }
-}
+
+    const { password } = req.body;
+    const hashedPassword = await bcrypt.hash(password, 10);
+    user.password = hashedPassword;
+    await user.save();
+    res.status(200).json({
+      message: "Password updated successfully",
+      success: true,
+    });
+  } catch (err) {
+    res.status(500).json({ error: err.message, success: false });
+  }
+};
+
+const getCurrentUser = async (req, res) => {
+  try {
+    res.status(200).json({
+      success: true,
+      user: req.user,
+    });
+  } catch (err) {
+    res.status(401).json({
+      success: false,
+      message: "Not authenticated",
+    });
+  }
+};
+
 
 module.exports = {
   signup,
   login,
   logout,
-  forgotPassword
+  getCurrentUser,
+  forgotPassword,
 };

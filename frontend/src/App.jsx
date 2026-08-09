@@ -1,26 +1,35 @@
 import React from 'react'
-import { Routes, Route } from 'react-router-dom'
+import {Routes, Route} from 'react-router-dom'
 
-import Login from './pages/Login'
-import Signup from './pages/Signup'
-import Dashboard from './pages/Dashboard'
-import ProtectedRoutes from './components/ProtectedRoutes'
-import Navbar from './components/Navbar'
+import Navbar from "./components/Navbar";
+import Dashboard from "./pages/Dashboard";
+import Login from "./pages/Login";
+import ProtectedRoute from "./components/ProtectedRoutes";
+import Home from './pages/Home';
+import Signup from './pages/Signup';
+
 
 
 const App = () => {
-  return (
+  return (<>
     <Navbar/>
-    // <Routes>
-
-    //   <Route path="/" element={<Login/>}/>
-    //   <Route path="/signup" element={<Signup/>}/>
-    //   <Route path="/dashboard" element = {
-    //     <ProtectedRoutes>
-    //       <Dashboard/>
-    //     </ProtectedRoutes>
-    //   }/>
-    // </Routes>
+   <Routes>
+        {/* Public routes */}
+        <Route path="/" element={<Home />} />
+        <Route path="/signup" element={<Signup />} />
+        <Route path="/login" element={<Login />} />
+        
+        {/* Protected routes */}
+        <Route
+          path="/dashboard"
+          element={
+            <ProtectedRoute>
+              <Dashboard />
+            </ProtectedRoute>
+          }
+        />
+      </Routes>
+  </>
   )
 }
 

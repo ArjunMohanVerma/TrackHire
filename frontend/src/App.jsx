@@ -5,20 +5,22 @@ import Login from './pages/Login'
 import Signup from './pages/Signup'
 import Dashboard from './pages/Dashboard'
 import ProtectedRoutes from './components/ProtectedRoutes'
+import Navbar from './components/Navbar'
 
 
 const App = () => {
   return (
-    <Routes>
+    <Navbar/>
+    // <Routes>
 
-      <Route path="/" element={<Login/>}/>
-      <Route path="/signup" element={<Signup/>}/>
-      <Route path="/dashboard" element = {
-        <ProtectedRoutes>
-          <Dashboard/>
-        </ProtectedRoutes>
-      }/>
-    </Routes>
+    //   <Route path="/" element={<Login/>}/>
+    //   <Route path="/signup" element={<Signup/>}/>
+    //   <Route path="/dashboard" element = {
+    //     <ProtectedRoutes>
+    //       <Dashboard/>
+    //     </ProtectedRoutes>
+    //   }/>
+    // </Routes>
   )
 }
 

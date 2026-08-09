@@ -1,17 +1,14 @@
-import React from 'react'
-import { logoutUser } from "../services/authService";
-import {useAuth} from "../context/AuthContext";
-import Navbar from "../components/Navbar";
+import React ,{useContext} from 'react'
+import { AuthContext } from "../context/AuthContext";
 
 
 const Dashboard = () => {
-  const { user } = useAuth();
+  const {user} = useContext(AuthContext);
+  console.log(user);
+  
   return (
     <>
-    <Navbar/>
-    <div>Dashboard Page Hehe!!
-      <h2> Welcome! {user?.firstName} {user?.lastName} To the Page</h2>
-    </div>
+    <h1>Hello {user?.firstName} {user?.lastName}, thank for using our Platform!</h1>
     </>
   )
 };

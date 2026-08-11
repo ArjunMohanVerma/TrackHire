@@ -1,4 +1,5 @@
 const Job = require("../models/JobModel");
+const searchLiveJobs = require("../services/jobService");
 
 const createJob = async (req, res) => {
   try {
@@ -58,6 +59,42 @@ const getAllJobs = async (req, res) => {
     });
   }
 };
+
+const getLiveJobs = async (req,res) =>{
+  try{
+    const {
+      keyword = "",
+      location = "",
+      page = 1,
+    } = req.query;
+
+    if (!keyword && !location) {
+      return res.status(400).json({
+        success: false,
+        message: "Please provide a keyword or location",
+      });
+    }
+
+    const jobs = await searchLiveJobs({
+      keyword,
+      location,
+      page,
+    });
+
+    return res.status(200).json({
+      success: true,
+      jobs,
+    });
+
+
+  }catch(err){
+    console.log(err.message)
+    return res.status(500).json({
+      success:false,
+      message:err.message
+    })
+  }
+}
 
 const getOneJob = async (req, res) => {
   try {
@@ -144,4 +181,4 @@ const deleteJob = async (req, res) => {
   }
 };
 
-module.exports = { createJob, getAllJobs, getOneJob, updateJob, deleteJob };
+module.exports = { createJob, getAllJobs, getLiveJobs, getOneJob, updateJob, deleteJob };

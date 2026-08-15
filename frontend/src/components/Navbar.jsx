@@ -1,7 +1,7 @@
 import React, { useState, useContext } from "react";
 import { AuthContext } from "../context/AuthContext";
 import { NavLink } from "react-router-dom";
-import img from "../../public/ImgLogo.png";
+import img from "/ImgLogo.png";
 
 const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);

@@ -367,7 +367,7 @@ const Home = () => {
       </section>
 
       {/* Footer */}
-      <footer className="bg-slate-900 py-8">
+      {/* <footer className="bg-slate-900 py-8">
 
         <div className="max-w-7xl mx-auto px-6">
 
@@ -405,7 +405,7 @@ const Home = () => {
 
         </div>
 
-      </footer>
+      </footer> */}
 
     </div>
   );

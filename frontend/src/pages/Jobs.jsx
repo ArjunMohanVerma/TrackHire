@@ -66,6 +66,7 @@ const Jobs = () => {
   const [experience, setExperience] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
+  const page = Number(searchParams.get("page")) || 1;
 
   //getting all jobs based on keywords and location
   useEffect(() => {
@@ -77,7 +78,7 @@ const Jobs = () => {
         const response = await getAllLiveJobs({
           keyword: searchParams.get("keyword") || "React",
           location: searchParams.get("location") || "India",
-          page: 1,
+          page: page,
         });
         setJobs(response.jobs || []);
       } catch (error) {
@@ -96,6 +97,7 @@ const Jobs = () => {
     setSearchParams({
       keyword: search,
       location: location,
+      page: 1,
     });
   };
 
@@ -130,7 +132,6 @@ const Jobs = () => {
           </div>
         </div>
       </section>
-
       {/* Search & Filters */}
       <section className="max-w-7xl mx-auto px-6 -mt-6 relative">
         <div className="bg-white rounded-2xl shadow-lg border border-slate-200 p-5">
@@ -163,11 +164,7 @@ const Jobs = () => {
                 onChange={(e) => setLocation(e.target.value)}
                 className="w-full px-4 py-3 rounded-lg border border-slate-300 outline-none focus:ring-2 focus:ring-teal-500 focus:border-teal-500"
               />
-
-              
             </div>
-
-            
 
             {/* Job Type */}
             <div>
@@ -206,14 +203,13 @@ const Jobs = () => {
             </div>
           </div>
           <button
-                onClick={handleSearch}
-                className="mx-auto my-10 justify-center flex px-6 py-3 rounded-lg bg-teal-600 text-white font-semibold hover:bg-teal-700 transition"
-              >
-                Search Jobs
-              </button>
+            onClick={handleSearch}
+            className="mx-auto my-10 justify-center flex px-6 py-3 rounded-lg bg-teal-600 text-white font-semibold hover:bg-teal-700 transition"
+          >
+            Search Jobs
+          </button>
         </div>
       </section>
-
       {/* Jobs */}
       <section className="max-w-7xl mx-auto px-6 py-12">
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6">
@@ -240,6 +236,38 @@ const Jobs = () => {
           <JobUnavailable />
         )}
       </section>
+
+      <div className="flex justify-center items-center gap-4 mt-10">
+        <button
+          disabled={page === 1 || loading}
+          onClick={() => {
+            setSearchParams({
+              keyword: searchParams.get("keyword") || "",
+              location: searchParams.get("location") || "",
+              page: page - 1,
+            });
+          }}
+          className="px-5 py-2 rounded-lg border border-slate-300 text-slate-700 font-semibold disabled:opacity-50 disabled:cursor-not-allowed"
+        >
+          ← Previous
+        </button>
+
+        <span className="font-semibold text-slate-700">Page {page}</span>
+
+        <button
+          disabled={loading || jobs.length < 10}
+          onClick={() => {
+            setSearchParams({
+              keyword: searchParams.get("keyword") || "",
+              location: searchParams.get("location") || "",
+              page: page + 1,
+            });
+          }}
+          className="px-5 py-2 rounded-lg bg-teal-600 text-white font-semibold hover:bg-teal-700 disabled:opacity-50 disabled:cursor-not-allowed"
+        >
+          Next →
+        </button>
+      </div>
     </div>
   );
 };

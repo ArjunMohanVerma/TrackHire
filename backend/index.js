@@ -6,6 +6,7 @@ const cors = require("cors");
 
 const authRoutes = require("./routes/authRoutes");
 const jobRoutes = require("./routes/jobRoutes");
+const applicationRoutes = require("./routes/applicationRoutes");
 const {connectDB} = require("./utils/DBConnection");
 
 dotenv.config();
@@ -22,6 +23,7 @@ app.use(cors({
 }));
 app.use("/auth", authRoutes);
 app.use("/job", jobRoutes);
+app.use("/application", applicationRoutes);
 
 connectDB()
   .then(() => {

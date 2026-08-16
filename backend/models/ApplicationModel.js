@@ -3,13 +3,13 @@ const mongoose = require("mongoose");
 const applicationSchema = new mongoose.Schema({
 
     user:{
-        type: Mongoose.Schema.Types.ObjectId,
+        type: mongoose.Schema.Types.ObjectId,
         ref:"User",
         required:true,
         index: true,
     },
     job:{
-        type:Mongoose.Schema.Types.ObjectId,
+        type:mongoose.Schema.Types.ObjectId,
         ref:"Job",
         required:true,
     },

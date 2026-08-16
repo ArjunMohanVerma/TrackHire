@@ -13,13 +13,15 @@ const searchLiveJobs = async ({
         keywords: keyword,
         location: location,
         page,
-        ResultOnPage: 10,
+        ResultOnPage: 1,
       }
     );
 
     const jobs = response.data.jobs || [];
+  
 
     return jobs.map(normalizeJob);
+    // console.log("Normalized Jobs:", jobs.map(normalizeJob));
 
   } catch (error) {
     console.error("Error searching live jobs:", error.message);

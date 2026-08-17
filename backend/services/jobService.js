@@ -13,7 +13,7 @@ const searchLiveJobs = async ({
         keywords: keyword,
         location: location,
         page,
-        ResultOnPage: 1,
+        ResultOnPage: 10,
       }
     );
 

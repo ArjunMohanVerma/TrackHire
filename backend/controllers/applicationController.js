@@ -1,5 +1,6 @@
 const Application = require("../models/ApplicationModel");
 const Job = require("../models/JobModel");
+const isValidObjectId = require("../utils/validateObjectId");
 
 const createApplication = async (req, res) => {
   try {
@@ -70,17 +71,15 @@ const createApplication = async (req, res) => {
       application._id,
     ).populate("job");
 
-    return res
-      .status(201)
-      .json({
-        message: "Application created successfully",
-        application: populatedApplication,
-      });
+    return res.status(201).json({
+      message: "Application created successfully",
+      application: populatedApplication,
+    });
   } catch (err) {
-    console.error("Error creating application:", err.message);
+    // console.error("Error creating application:", err.message);
     return res
       .status(500)
-      .json({ message: "Server Error", error: err.message });
+      .json({ message: "Server Error"});
   }
 };
 
@@ -91,62 +90,70 @@ const getApplications = async (req, res) => {
     })
       .populate("job")
       .sort({ createdAt: -1 });
-    return res
-      .status(200)
-      .json({
-        message: "Applications fetched successfully",
-        count: applications.length,
-        applications,
-      });
+    return res.status(200).json({
+      message: "Applications fetched successfully",
+      count: applications.length,
+      applications,
+    });
   } catch (err) {
-    console.error("Error fetching applications:", err.message);
+    // console.error("Error fetching applications:", err.message);
     return res
       .status(500)
-      .json({ message: "Server Error", error: err.message });
+      .json({ message: "Server Error"});
   }
 };
 
 const getApplicationById = async (req, res) => {
   try {
-
-    const {id} = req.params;
+    const { id } = req.params;
+    if (!isValidObjectId(id)) {
+      return res.status(400).json({
+        message: "Invalid Application ID",
+      });
+    }
 
     const application = await Application.findOne({
-        _id:id,
-        user: req.user._id
+      _id: id,
+      user: req.user._id,
     }).populate("job");
 
     if (!application) {
       return res.status(404).json({ message: "Application not found" });
     }
 
-    return res.status(200).json({ message: "Application fetched successfully", application });
-
+    return res
+      .status(200)
+      .json({ message: "Application fetched successfully", application });
   } catch (err) {
-    console.error("Error fetching applications:", err.message);
+    // console.error("Error fetching applications:", err.message);
     return res
       .status(500)
-      .json({ message: "Server Error", error: err.message });
+      .json({ message: "Server Error"});
   }
 };
 
 const updateApplication = async (req, res) => {
   try {
-
-    const {id} = req.params;
-    const { status, appliedAt, priority, notes, interviewDate, followUpDate } = req.body;
+    const { id } = req.params;
+    const { status, appliedAt, priority, notes, interviewDate, followUpDate } =
+      req.body;
+    if (!isValidObjectId(id)) {
+      return res.status(400).json({
+        message: "Invalid application ID",
+      });
+    }
 
     const application = await Application.findOne({
-        _id:id,
-        user: req.user._id,
+      _id: id,
+      user: req.user._id,
     });
 
-    if(!application){
-        return res.status(404).json({
-            message: "Application not found",
-        });
+    if (!application) {
+      return res.status(404).json({
+        message: "Application not found",
+      });
     }
-     if (status !== undefined) {
+    if (status !== undefined) {
       application.status = status;
     }
 
@@ -174,26 +181,30 @@ const updateApplication = async (req, res) => {
     await application.save();
 
     const populatedApplication = await Application.findById(
-        application._id
+      application._id,
     ).populate("job");
 
     return res.status(200).json({
-        message: "Application updated successfully",
-        application: populatedApplication,
-    })
-
+      message: "Application updated successfully",
+      application: populatedApplication,
+    });
   } catch (err) {
-    console.error("Error updating applications:", err.message);
     return res
       .status(500)
-      .json({ message: "Server Error", error: err.message });
+      .json({ message: "Server Error"});
   }
 };
 
 const deleteApplication = async (req, res) => {
   try {
+    const { id } = req.params;
 
-    const {id} = req.params;
+    if (!isValidObjectId(id)) {
+      return res.status(400).json({
+        message: "Invalid application ID",
+      });
+    }
+
     const application = await Application.findOne({
       _id: id,
       user: req.user._id,
@@ -215,12 +226,10 @@ const deleteApplication = async (req, res) => {
     return res.status(200).json({
       message: "Application deleted successfully",
     });
-
   } catch (err) {
-    console.error("Error deleting applications:", err.message);
     return res
       .status(500)
-      .json({ message: "Server Error", error: err.message });
+      .json({ message: "Server Error"});
   }
 };
 
@@ -229,5 +238,5 @@ module.exports = {
   getApplications,
   getApplicationById,
   updateApplication,
-  deleteApplication
+  deleteApplication,
 };

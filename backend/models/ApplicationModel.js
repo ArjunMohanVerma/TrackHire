@@ -6,7 +6,6 @@ const applicationSchema = new mongoose.Schema({
         type: mongoose.Schema.Types.ObjectId,
         ref:"User",
         required:true,
-        index: true,
     },
     job:{
         type:mongoose.Schema.Types.ObjectId,
@@ -16,19 +15,19 @@ const applicationSchema = new mongoose.Schema({
     status:{
         type:String,
         enum:["Saved","Applied","Shortlisted","Rejected","Screening","Interview","Offer","Hired","Technical Round","HR Round","Withdrawn"],
-        degault:"Saved",
+        default:"Saved",
     },
     appliedAt:{
         type:Date,
     },
-     prioroty:{
+     priority:{
         type:String,
         enum:["Low","Medium","High"],
         default:"Medium",
     },
     notes:{
         type:String,
-        maxlength:2000,
+        maxlength:[2000, "Notes cannot exceed 2000 characters"],
         trim:true,
         default:"",
     },
@@ -44,6 +43,7 @@ const applicationSchema = new mongoose.Schema({
 
 applicationSchema.index({ user: 1, status: 1 });
 applicationSchema.index({ user: 1, createdAt: -1 });
+applicationSchema.index({ user: 1, job: 1 }, { unique: true });
 
 const Application = mongoose.model("Application", applicationSchema);
 

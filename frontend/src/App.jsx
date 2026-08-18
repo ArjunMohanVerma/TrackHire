@@ -9,6 +9,7 @@ import Home from "./pages/Home";
 import Signup from "./pages/Signup";
 import Jobs from "./pages/Jobs";
 import Footer from "./components/Footer";
+import Applications from "./pages/Applications";
 
 const App = () => {
   return (
@@ -27,6 +28,15 @@ const App = () => {
           element={
             <ProtectedRoute>
               <Dashboard />
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
+          path="/applications"
+          element={
+            <ProtectedRoute>
+              <Applications />
             </ProtectedRoute>
           }
         />

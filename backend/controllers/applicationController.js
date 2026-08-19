@@ -77,9 +77,16 @@ const createApplication = async (req, res) => {
     });
   } catch (err) {
     // console.error("Error creating application:", err.message);
-    return res
-      .status(500)
-      .json({ message: "Server Error"});
+    // return res
+    //   .status(500)
+    //   .json({ message: "Server Error"});
+
+    console.error("CREATE APPLICATION ERROR:", err);
+
+  return res.status(500).json({
+    message: err.message,
+  });
+
   }
 };
 

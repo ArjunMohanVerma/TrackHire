@@ -1,6 +1,10 @@
 import React from 'react'
+import {createApplication} from '../services/applicationService'
 
-const JobCard = ({job}) => {
+const JobCard = ({job, onApply}) => {
+
+
+
   return (
     <>
     
@@ -90,7 +94,7 @@ const JobCard = ({job}) => {
                   </button>
 
                   <button
-                    className="flex-1 px-5 py-3 rounded-lg border border-slate-300 text-slate-700 font-semibold hover:bg-slate-50 transition"
+                    className="flex-1 px-5 py-3 rounded-lg border border-slate-300 text-slate-700 font-semibold hover:bg-slate-50 transition" onClick={()=>{onApply(job)}}
                   >
                     Apply & Track
                   </button>

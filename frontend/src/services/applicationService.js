@@ -1,11 +1,14 @@
 import axiosInstance from "./axiosInstance";
 
 //create a application
-export const createApplication = async (applicationData) =>{
-    const response = axiosInstance.post("/application/createapplication", applicationData);
+export const createApplication = async (applicationData) => {
+  const response = await axiosInstance.post(
+    "/application/createapplication",
+    applicationData
+  );
 
-    return response.data
-}
+  return response.data;
+};
 
 //get all applicatin for logged in user
 export const getApplications = async(req, res ) => {

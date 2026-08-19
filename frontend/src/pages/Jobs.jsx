@@ -3,57 +3,7 @@ import { useSearchParams } from "react-router-dom";
 import JobUnavailable from "../components/JobUnavailable";
 import JobCard from "../components/JobCard";
 import { getAllLiveJobs } from "../services/jobService";
-
-// const mockJobs = [
-//   {
-//     id: 1,
-//     title: "Frontend Developer",
-//     company: "Tech Solutions",
-//     location: "Bangalore",
-//     type: "Full Time",
-//     experience: "0-2 years",
-//     salary: "₹6L - ₹10L",
-//     source: "Jooble",
-//     posted: "2 days ago",
-//     skills: ["React", "JavaScript", "Tailwind CSS"],
-//   },
-//   {
-//     id: 2,
-//     title: "React Developer",
-//     company: "Innovate Labs",
-//     location: "Hyderabad",
-//     type: "Full Time",
-//     experience: "1-3 years",
-//     salary: "₹7L - ₹12L",
-//     source: "Adzuna",
-//     posted: "1 day ago",
-//     skills: ["React", "Node.js", "MongoDB"],
-//   },
-//   {
-//     id: 3,
-//     title: "Full Stack Developer",
-//     company: "Startup Hub",
-//     location: "Remote",
-//     type: "Full Time",
-//     experience: "2-4 years",
-//     salary: "₹10L - ₹18L",
-//     source: "Jooble",
-//     posted: "3 days ago",
-//     skills: ["React", "Node.js", "Express", "MongoDB"],
-//   },
-//   {
-//     id: 4,
-//     title: "Software Engineer",
-//     company: "Digital Works",
-//     location: "Pune",
-//     type: "Full Time",
-//     experience: "0-2 years",
-//     salary: "₹5L - ₹9L",
-//     source: "Adzuna",
-//     posted: "5 days ago",
-//     skills: ["JavaScript", "React", "Git"],
-//   },
-// ];
+import { createApplication } from "../services/applicationService";
 
 const Jobs = () => {
   const [jobs, setJobs] = useState([]);
@@ -99,6 +49,26 @@ const Jobs = () => {
       location: location,
       page: 1,
     });
+  };
+
+  //handle apply
+  const handleApply = async (job) => {
+    try {
+      const data = await createApplication({
+        job,
+        appliedAt: new Date(),
+        status: "Applied",
+      });
+      console.log("Application created:", data);
+
+      alert("Job added to your applications!");
+    } catch (error) {
+      console.error("Error applying:", error);
+
+      alert(
+        error.response?.data?.message || "Unable to track this application.",
+      );
+    }
   };
 
   //frontend filtering based on job type and experience
@@ -229,7 +199,7 @@ const Jobs = () => {
         {filteredJobs.length > 0 ? (
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
             {filteredJobs.map((job) => (
-              <JobCard key={job.id} job={job} />
+              <JobCard key={job.id} job={job} onApply={handleApply} />
             ))}
           </div>
         ) : (

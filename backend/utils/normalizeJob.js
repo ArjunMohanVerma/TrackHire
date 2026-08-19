@@ -12,6 +12,26 @@ const getWorkMode = (job) => {
   return "Onsite";
 };
 
+const normalizeJobType = (type) => {
+  if (!type) return "Full Time";
+
+  const value = type.toLowerCase().trim();
+
+  if (value === "full-time" || value === "full time") {
+    return "Full Time";
+  }
+
+  if (value === "part-time" || value === "part time") {
+    return "Part Time";
+  }
+
+  if (value === "contract") {
+    return "Contract";
+  }
+
+  return type;
+};
+
 
 const normalizeJob = (job) => {
   return {
@@ -23,7 +43,7 @@ const normalizeJob = (job) => {
 
     location: job.location || "Location not specified",
 
-    jobType: job.type || "Full Time",
+    jobType: normalizeJobType(job.type),
 
     workMode: getWorkMode(job),
 

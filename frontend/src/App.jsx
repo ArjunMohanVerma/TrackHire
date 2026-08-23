@@ -40,6 +40,14 @@ const App = () => {
             </ProtectedRoute>
           }
         />
+        {/* <Route
+          path="/applications/:id"
+          element={
+            <ProtectedRoute>
+              <ApplicationDetails />
+            </ProtectedRoute>
+          }
+        /> */}
       </Routes>
       <Footer />
     </>

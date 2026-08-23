@@ -199,7 +199,7 @@ const Jobs = () => {
         {filteredJobs.length > 0 ? (
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
             {filteredJobs.map((job) => (
-              <JobCard key={job.id} job={job} onApply={handleApply} />
+              <JobCard key={job.externalId} job={job} onApply={handleApply} />
             ))}
           </div>
         ) : (

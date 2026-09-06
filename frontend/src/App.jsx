@@ -10,6 +10,7 @@ import Signup from "./pages/Signup";
 import Jobs from "./pages/Jobs";
 import Footer from "./components/Footer";
 import Applications from "./pages/Applications";
+import Profile from "./pages/Profile";
 
 const App = () => {
   return (
@@ -40,6 +41,16 @@ const App = () => {
             </ProtectedRoute>
           }
         />
+
+        <Route
+          path="/profile"
+          element={
+            <ProtectedRoute>
+              <Profile />
+            </ProtectedRoute>
+          }
+        />
+
         {/* <Route
           path="/applications/:id"
           element={

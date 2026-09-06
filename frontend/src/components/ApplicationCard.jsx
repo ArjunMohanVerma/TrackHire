@@ -178,7 +178,7 @@ const ApplicationCard = ({
         </button>
 
         <button
-          onClick={() => onDelete(application._id)}
+          onClick={() => onDelete(application)}
           className="flex-1 min-w-25 px-4 py-2 rounded-lg border border-red-200 text-red-600 font-medium hover:bg-red-50 transition"
         >
           Delete

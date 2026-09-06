@@ -4,9 +4,13 @@ const cookieparser = require("cookie-parser")
 const mongoose = require("mongoose");
 const cors = require("cors");
 
+//importing all required routes
 const authRoutes = require("./routes/authRoutes");
 const jobRoutes = require("./routes/jobRoutes");
 const applicationRoutes = require("./routes/applicationRoutes");
+const dashboardRoutes = require("./routes/dashboardRoutes");
+
+//importing database connections
 const {connectDB} = require("./utils/DBConnection");
 
 dotenv.config();
@@ -24,6 +28,7 @@ app.use(cors({
 app.use("/auth", authRoutes);
 app.use("/job", jobRoutes);
 app.use("/application", applicationRoutes);
+app.use("/dashboard", dashboardRoutes)
 
 connectDB()
   .then(() => {

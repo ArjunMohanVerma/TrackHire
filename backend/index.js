@@ -9,6 +9,7 @@ const authRoutes = require("./routes/authRoutes");
 const jobRoutes = require("./routes/jobRoutes");
 const applicationRoutes = require("./routes/applicationRoutes");
 const dashboardRoutes = require("./routes/dashboardRoutes");
+const profileRoutes = require("./routes/profileRoutes");
 
 //importing database connections
 const {connectDB} = require("./utils/DBConnection");
@@ -28,7 +29,8 @@ app.use(cors({
 app.use("/auth", authRoutes);
 app.use("/job", jobRoutes);
 app.use("/application", applicationRoutes);
-app.use("/dashboard", dashboardRoutes)
+app.use("/dashboard", dashboardRoutes);
+app.use("/profile", profileRoutes);
 
 connectDB()
   .then(() => {

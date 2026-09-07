@@ -1,5 +1,6 @@
 import React from "react";
 import { Routes, Route } from "react-router-dom";
+import { Toaster } from "react-hot-toast";
 
 import Navbar from "./components/Navbar";
 import Dashboard from "./pages/Dashboard";
@@ -10,10 +11,12 @@ import Signup from "./pages/Signup";
 import Jobs from "./pages/Jobs";
 import Footer from "./components/Footer";
 import Applications from "./pages/Applications";
+import Profile from "./pages/Profile";
 
 const App = () => {
   return (
     <>
+      <Toaster position="top-right" />
       <Navbar />
       <Routes>
         {/* Public routes */}
@@ -40,6 +43,16 @@ const App = () => {
             </ProtectedRoute>
           }
         />
+
+        <Route
+          path="/profile"
+          element={
+            <ProtectedRoute>
+              <Profile />
+            </ProtectedRoute>
+          }
+        />
+
         {/* <Route
           path="/applications/:id"
           element={

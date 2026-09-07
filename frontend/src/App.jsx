@@ -1,5 +1,6 @@
 import React from "react";
 import { Routes, Route } from "react-router-dom";
+import { Toaster } from "react-hot-toast";
 
 import Navbar from "./components/Navbar";
 import Dashboard from "./pages/Dashboard";
@@ -15,6 +16,7 @@ import Profile from "./pages/Profile";
 const App = () => {
   return (
     <>
+      <Toaster position="top-right" />
       <Navbar />
       <Routes>
         {/* Public routes */}

@@ -1,10 +1,14 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { getProfile } from "../services/profileService";
+import EditProfileModal from "../components/EditProfileModal";
+import { uploadProfileImage } from "../services/profileService";
+import toast from "react-hot-toast";
 
 const Profile = () => {
   const [profile, setProfile] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
+  const [showEditModal, setShowEditModal] = useState(false);
 
   useEffect(() => {
     const fetchProfile = async () => {
@@ -14,10 +18,7 @@ const Profile = () => {
       } catch (error) {
         console.error("Error loading profile:", error);
 
-        setError(
-          error.response?.data?.message ||
-            "Unable to load profile"
-        );
+        setError(error.response?.data?.message || "Unable to load profile");
       } finally {
         setLoading(false);
       }
@@ -31,9 +32,7 @@ const Profile = () => {
       <div className="min-h-screen bg-slate-50 flex items-center justify-center">
         <div className="flex flex-col items-center gap-3">
           <div className="h-10 w-10 animate-spin rounded-full border-4 border-slate-200 border-t-blue-600" />
-          <p className="text-sm text-slate-500">
-            Loading profile...
-          </p>
+          <p className="text-sm text-slate-500">Loading profile...</p>
         </div>
       </div>
     );
@@ -51,9 +50,7 @@ const Profile = () => {
             Unable to load profile
           </h2>
 
-          <p className="mt-2 text-sm text-slate-500">
-            {error}
-          </p>
+          <p className="mt-2 text-sm text-slate-500">{error}</p>
         </div>
       </div>
     );
@@ -62,9 +59,7 @@ const Profile = () => {
   if (!profile) {
     return (
       <div className="min-h-screen bg-slate-50 flex items-center justify-center">
-        <p className="text-slate-500">
-          Profile not found.
-        </p>
+        <p className="text-slate-500">Profile not found.</p>
       </div>
     );
   }
@@ -77,15 +72,34 @@ const Profile = () => {
     profile.lastName?.[0] || ""
   }`.toUpperCase();
 
+  const handleImageChange = async (e) => {
+  const file = e.target.files[0];
+
+  if (!file) return;
+  
+  // instant profile image preview
+  const previewUrl = URL.createObjectURL(file);
+  setProfile((prev) => ({ ...prev, profileImage: previewUrl }));
+
+  try {
+    const response = await uploadProfileImage(file);
+    const newImageUrl = response.data.imageUrl;
+
+    setProfile((prev) => ({ ...prev, profileImage: newImageUrl }));
+    toast.success("Profile image uploaded successfully!");
+    // console.log(response.data);
+  } catch (error) {
+    toast.error("Failed to upload profile image. Please try again.");
+    console.error("Image upload failed:", error);
+  }
+};
+
   return (
     <div className="min-h-screen bg-slate-50">
       <div className="mx-auto max-w-6xl px-4 py-8 sm:px-6 lg:px-8">
-
         {/* PAGE HEADER */}
         <div className="mb-6">
-          <h1 className="text-2xl font-bold text-slate-900">
-            My Profile
-          </h1>
+          <h1 className="text-2xl font-bold text-slate-900">My Profile</h1>
 
           <p className="mt-1 text-sm text-slate-500">
             Manage your professional profile and job preferences.
@@ -94,29 +108,35 @@ const Profile = () => {
 
         {/* PROFILE HEADER */}
         <div className="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
-
           {/* Cover */}
-          <div className="h-32 bg-gradient-to-r from-blue-600 via-indigo-600 to-violet-600 sm:h-40" />
+          <div className="h-32 bg-linear-to-r from-blue-300 via-indigo-400 to-violet-300 sm:h-40" />
 
           <div className="px-5 pb-6 sm:px-8">
-
             <div className="-mt-12 flex flex-col gap-5 sm:-mt-14 sm:flex-row sm:items-end sm:justify-between">
-
               {/* User Info */}
               <div className="flex flex-col gap-4 sm:flex-row sm:items-end">
-
                 {/* Avatar */}
-                {profile.profileImage ? (
-                  <img
-                    src={profile.profileImage}
-                    alt={fullName}
-                    className="h-24 w-24 rounded-2xl border-4 border-white object-cover shadow-md sm:h-28 sm:w-28"
-                  />
-                ) : (
-                  <div className="flex h-24 w-24 items-center justify-center rounded-2xl border-4 border-white bg-slate-900 text-2xl font-bold text-white shadow-md sm:h-28 sm:w-28">
-                    {initials || "U"}
-                  </div>
-                )}
+                <label htmlFor="profileImage" className="cursor-pointer">
+                  {profile.profileImage ? (
+                    <img
+                      src={profile.profileImage}
+                      alt={fullName}
+                      className="h-24 w-24 rounded-2xl border-4 border-white object-cover shadow-md sm:h-28 sm:w-28"
+                    />
+                  ) : (
+                    <div className="flex h-24 w-24 items-center justify-center rounded-2xl border-4 border-white bg-slate-900 text-2xl font-bold text-white shadow-md sm:h-28 sm:w-28">
+                      {initials || "U"}
+                    </div>
+                  )}
+                </label>
+
+                <input
+                  id="profileImage"
+                  type="file"
+                  accept="image/*"
+                  className="hidden"
+                  onChange={handleImageChange}
+                />
 
                 <div className="pb-1">
                   <h2 className="text-2xl font-bold text-slate-900">
@@ -148,6 +168,7 @@ const Profile = () => {
               {/* Edit button */}
               <button
                 type="button"
+                onClick={() => setShowEditModal(true)}
                 className="rounded-lg bg-slate-900 px-5 py-2.5 text-sm font-medium text-white transition hover:bg-slate-800"
               >
                 Edit Profile
@@ -158,16 +179,12 @@ const Profile = () => {
 
         {/* MAIN CONTENT */}
         <div className="mt-6 grid grid-cols-1 gap-6 lg:grid-cols-3">
-
           {/* LEFT COLUMN */}
           <div className="space-y-6 lg:col-span-2">
-
             {/* ABOUT */}
             <section className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
               <div className="mb-4 flex items-center justify-between">
-                <h3 className="text-lg font-semibold text-slate-900">
-                  About
-                </h3>
+                <h3 className="text-lg font-semibold text-slate-900">About</h3>
               </div>
 
               <p className="whitespace-pre-line text-sm leading-6 text-slate-600">
@@ -183,11 +200,7 @@ const Profile = () => {
               </h3>
 
               <div className="grid grid-cols-1 gap-5 sm:grid-cols-2">
-
-                <InfoItem
-                  label="Current Role"
-                  value={profile.currentRole}
-                />
+                <InfoItem label="Current Role" value={profile.currentRole} />
 
                 <InfoItem
                   label="Current Company"
@@ -203,10 +216,7 @@ const Profile = () => {
                   }
                 />
 
-                <InfoItem
-                  label="Phone"
-                  value={profile.phone}
-                />
+                <InfoItem label="Phone" value={profile.phone} />
               </div>
             </section>
 
@@ -228,9 +238,7 @@ const Profile = () => {
                   ))}
                 </div>
               ) : (
-                <p className="text-sm text-slate-500">
-                  No skills added yet.
-                </p>
+                <p className="text-sm text-slate-500">No skills added yet.</p>
               )}
             </section>
 
@@ -252,8 +260,7 @@ const Profile = () => {
                       </h4>
 
                       <p className="mt-1 text-sm text-slate-600">
-                        {education.institution ||
-                          "Institution not specified"}
+                        {education.institution || "Institution not specified"}
                       </p>
 
                       {education.fieldOfStudy && (
@@ -262,11 +269,9 @@ const Profile = () => {
                         </p>
                       )}
 
-                      {(education.startYear ||
-                        education.endYear) && (
+                      {(education.startYear || education.endYear) && (
                         <p className="mt-2 text-xs text-slate-400">
-                          {education.startYear || "----"}{" "}
-                          -{" "}
+                          {education.startYear || "----"} -{" "}
                           {education.endYear || "Present"}
                         </p>
                       )}
@@ -283,7 +288,6 @@ const Profile = () => {
 
           {/* RIGHT COLUMN */}
           <div className="space-y-6">
-
             {/* JOB PREFERENCES */}
             <section className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
               <h3 className="mb-5 text-lg font-semibold text-slate-900">
@@ -291,7 +295,6 @@ const Profile = () => {
               </h3>
 
               <div className="space-y-5">
-
                 <PreferenceItem
                   label="Preferred Roles"
                   values={profile.preferredRoles}
@@ -302,10 +305,7 @@ const Profile = () => {
                   values={profile.preferredLocations}
                 />
 
-                <PreferenceItem
-                  label="Work Mode"
-                  values={profile.workMode}
-                />
+                <PreferenceItem label="Work Mode" values={profile.workMode} />
 
                 <PreferenceItem
                   label="Employment Type"
@@ -321,10 +321,7 @@ const Profile = () => {
                   }
                 />
 
-                <InfoItem
-                  label="Notice Period"
-                  value={profile.noticePeriod}
-                />
+                <InfoItem label="Notice Period" value={profile.noticePeriod} />
               </div>
             </section>
 
@@ -335,21 +332,11 @@ const Profile = () => {
               </h3>
 
               <div className="space-y-4">
+                <SocialLink label="LinkedIn" value={profile.linkedin} />
 
-                <SocialLink
-                  label="LinkedIn"
-                  value={profile.linkedin}
-                />
+                <SocialLink label="GitHub" value={profile.github} />
 
-                <SocialLink
-                  label="GitHub"
-                  value={profile.github}
-                />
-
-                <SocialLink
-                  label="Portfolio"
-                  value={profile.portfolio}
-                />
+                <SocialLink label="Portfolio" value={profile.portfolio} />
               </div>
             </section>
 
@@ -360,29 +347,28 @@ const Profile = () => {
               </h3>
 
               <div className="space-y-3">
-                <InfoItem
-                  label="Email"
-                  value={profile.email}
-                />
+                <InfoItem label="Email" value={profile.email} />
 
-                <InfoItem
-                  label="Phone"
-                  value={profile.phone}
-                />
+                <InfoItem label="Phone" value={profile.phone} />
 
-                <InfoItem
-                  label="Location"
-                  value={profile.location}
-                />
+                <InfoItem label="Location" value={profile.location} />
               </div>
             </section>
           </div>
         </div>
       </div>
+      {showEditModal && (
+        <EditProfileModal
+          profile={profile}
+          onClose={() => setShowEditModal(false)}
+          onProfileUpdate={(updatedProfile) => {
+            setProfile(updatedProfile);
+          }}
+        />
+      )}
     </div>
   );
 };
-
 
 /* -------------------------------- */
 /* REUSABLE COMPONENTS              */
@@ -401,7 +387,6 @@ const InfoItem = ({ label, value }) => {
     </div>
   );
 };
-
 
 const PreferenceItem = ({ label, values }) => {
   return (
@@ -422,14 +407,11 @@ const PreferenceItem = ({ label, values }) => {
           ))}
         </div>
       ) : (
-        <p className="mt-1 text-sm text-slate-500">
-          Not specified
-        </p>
+        <p className="mt-1 text-sm text-slate-500">Not specified</p>
       )}
     </div>
   );
 };
-
 
 const SocialLink = ({ label, value }) => {
   return (
@@ -448,13 +430,10 @@ const SocialLink = ({ label, value }) => {
           {value}
         </a>
       ) : (
-        <p className="mt-1 text-sm text-slate-500">
-          Not added
-        </p>
+        <p className="mt-1 text-sm text-slate-500">Not added</p>
       )}
     </div>
   );
 };
-
 
 export default Profile;

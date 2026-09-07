@@ -20,3 +20,10 @@ export const updateProfile = async (profileData) => {
     throw error;
   }
 };
+
+export const uploadProfileImage = async (file) =>{
+  const formData = new FormData();
+  formData.append("profileImage", file);
+  const response = await axiosInstance.post("/profile/image", formData)
+  return response;
+}

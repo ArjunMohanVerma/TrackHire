@@ -1,16 +1,41 @@
-import React ,{useContext} from 'react'
-import { AuthContext } from "../context/AuthContext";
-
+import { useEffect, useState } from "react";
+import { getDashboard } from "../services/dashboardService";
 
 const Dashboard = () => {
-  // const {user} = useContext(AuthContext);
-  // console.log(user);
-  
+  const [dashboard, setDashboard] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
+
+  useEffect(() => {
+    const fetchDashboard = async () => {
+      try {
+        const data = await getDashboard();
+
+        setDashboard(data);
+      } catch (error) {
+        console.error(error);
+        setError("Failed to load dashboard");
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchDashboard();
+  }, []);
+
+  if (loading) {
+    return <div>Loading dashboard...</div>;
+  }
+
+  if (error) {
+    return <div>{error}</div>;
+  }
+
   return (
-    <>
-    {/* <h1>Hello {user?.firstName} {user?.lastName}, thank for using our Platform!</h1> */}
-    </>
-  )
+    <div>
+      Dashboard
+    </div>
+  );
 };
 
-export default Dashboard
+export default Dashboard;

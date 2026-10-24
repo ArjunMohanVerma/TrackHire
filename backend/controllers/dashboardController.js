@@ -1,5 +1,4 @@
 const Application = require("../models/ApplicationModel");
-const User = require("../models/UserModel");
 
 const getDashboard = async (req, res) => {
   try {
@@ -75,7 +74,7 @@ const getDashboard = async (req, res) => {
     const now = new Date();
     const upcomingInterviews = await Application.find({
       user: userId,
-      interviesDate: {
+      interviewDate: {
         $gte: now,
       },
     })
@@ -119,8 +118,9 @@ const getDashboard = async (req, res) => {
       user.portfolio,
     ];
     const completedFields = profileFields.filter(Boolean).length;
-    const profileCompletion = (completedFields / profileFields.length) * 100;
-    Math.round((completedFields / profileFields.length) * 100);
+    const profileCompletion = Math.round(
+      (completedFields / profileFields.length) * 100,
+    );
 
     return res.status(200).json({
       success: true,

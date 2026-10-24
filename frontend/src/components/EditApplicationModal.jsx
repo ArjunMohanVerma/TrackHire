@@ -99,9 +99,15 @@ const EditApplicationModal = ({ application, onClose, onSave }) => {
                 onChange={handleChange}
                 className="w-full px-4 py-3 rounded-lg border border-slate-300 bg-white outline-none focus:ring-2 focus:ring-teal-500"
               >
+                <option value="Saved">Saved</option>
                 <option value="Applied">Applied</option>
+                <option value="Shortlisted">Shortlisted</option>
+                <option value="Screening">Screening</option>
                 <option value="Interview">Interview</option>
+                <option value="Technical Round">Technical Round</option>
+                <option value="HR Round">HR Round</option>
                 <option value="Offer">Offer</option>
+                <option value="Hired">Hired</option>
                 <option value="Rejected">Rejected</option>
                 <option value="Withdrawn">Withdrawn</option>
               </select>
